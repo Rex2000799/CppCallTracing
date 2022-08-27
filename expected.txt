@@ -1,0 +1,398 @@
+Entry Callout ctor: input: Content 1
+Real ctor, content: Content 1
+Exit Callout ctor
+Entry Callout ctor: input: Content 2
+Real ctor, content: Content 2
+Exit Callout ctor
+Entry Callout FreeFunction: Test Message 1
+Real FreeFunction: Test Message 1
+Exit Callout FreeFunction
+Entry Callout FreeTemplateFunction: Test Message 1
+Real FreeTemplateFunction: Test Message 1
+Exit Callout FreeTemplateFunction
+Entry Callout copy ctor: input: Content 1
+Real copy ctor, content: Content 1
+Exit Callout copy ctor
+Entry Callout copy assignment: content: Content 1, input: Content 2
+Real copy assignment operator, content: Content 1, input: Content 2
+Exit Callout copy assignment
+Entry Callout move ctor: input: Content 2
+Real move ctor, content: Content 2
+Exit Callout move ctor
+Entry Callout move assignment: content: Content 2, input: Content 2
+Real move assignment operator, content Content 2, input: Content 2
+Exit Callout move assignment
+Entry Callout MemberFunction: content: Content 1, input: Test Message 1
+Real MemberFunction, content: Content 1, input: Test Message 1
+Exit Callout MemberFunction
+Entry Callout StaticMemberFunction: input: Test Message 1
+Real StaticMemberFunction, input: Test Message 1
+Exit Callout StaticMemberFunction
+Entry Callout ParamVal: content: Content 1, input: Test Message 1
+Real ParamVal, content: Content 1, input: Test Message 1
+Exit Callout ParamVal
+Entry Callout ParamRef: content: Content 1, input: Test Message 1
+Real ParamRef, content: Content 1, input: Test Message 1
+Exit Callout ParamRef
+Entry Callout ParamConstRef: content: Content 1, input: Test Message 1
+Real ParamConstRef, content: Content 1, input: Test Message 1
+Exit Callout ParamConstRef
+Entry Callout ParamPtr: content: Content 1, input: Test Message 1
+Real ParamPtr, content: Content 1, input: Test Message 1
+Exit Callout ParamPtr
+Entry Callout ParamConstPtr: content: Content 1, input: Test Message 1
+Real ParamConstPtr, content: Content 1, input: Test Message 1
+Exit Callout ParamConstPtr
+Entry Callout ParamMove: content: Content 1, input: Test Message 3
+Real ParamMove, content: Content 1, input: Test Message 3
+Exit Callout ParamMove
+Entry Callout ParamMultiple: content: Content 1, input: Test Message 1, Test Message 2
+Real ParamMultiple, content: Content 1, input 1: Test Message 1, input 2: Test Message 2
+Exit Callout ParamMultiple
+Entry Callout RetVal: content: Content 1
+Real RetVal, content: Content 1
+Exit Callout RetVal: output: Returning by value.
+RetVal() returned Returning by value.
+Entry Callout RetRef: content: Content 1
+Real RetRef, content: Content 1
+Exit Callout RetRef: output: Returning by reference.
+RetRef() returned Returning by reference.
+Entry Callout RetConstRef: content: Content 1
+Real RetConstRef, content: Content 1
+Exit Callout RetConstRef: output: Returning by const reference.
+RetConstRef() returned Returning by const reference.
+Entry Callout RetPtr: content: Content 1
+Real RetPtr, content: Content 1
+Exit Callout RetPtr: output: Returning by pointer.
+RetPtr() returned Returning by pointer.
+Entry Callout RetConstPtr: content: Content 1
+Real RetConstPtr, content: Content 1
+Exit Callout RetConstPtr: output: Returning by const pointer.
+RetConstPtr() returned Returning by const pointer.
+Entry Callout RetMove: content: Content 1
+Real RetMove, content: Content 1
+Exit Callout RetMove: output: Returning by move.
+RetMove() returned Returning by move.
+Entry Callout Overload (no param): content: Content 1
+Real Overload(), content: Content 1
+Exit Callout Overload (no param)
+Entry Callout Overload (with param): content: Content 1, input: Test Message 1
+Real Overload(StringContainer), content: Content 1, input : Test Message 1
+Exit Callout Overload (with param)
+Entry Callout Prefix: content: Content 1
+Real Prefix(), content: Content 1
+Exit Callout Prefix
+Entry Callout PrefixPostfix: content: Content 1
+Real PrefixPostfix(), content: Content 1
+Exit Callout PrefixPostfix
+Entry Callout prefix increment operator (member): content: Content 1
+Real prefix increment operator (member), content: Content 1
+Exit Callout prefix increment operator (member)
+Entry Callout postfix increment operator (member): content: Content 1
+Real postfix increment operator (member), content: Content 1
+Exit Callout postfix increment operator (member)
+Entry Callout prefix decrement operator (member): content: Content 1
+Real prefix decrement operator (member), content: Content 1
+Exit Callout prefix decrement operator (member)
+Entry Callout postfix decrement operator (member): content: Content 1
+Real postfix decrement operator (member), content: Content 1
+Exit Callout postfix decrement operator (member)
+Entry Callout addition-assignment operator (member): content: Content 1, input: Test Message 1
+Real addition-assignment operator (member), content: Content 1, input : Test Message 1
+Exit Callout addition-assignment operator (member)
+Entry Callout subtraction-assignment operator (member): content: Content 1, input: Test Message 1
+Real subtraction-assignment operator (member), content: Content 1, input : Test Message 1
+Exit Callout subtraction-assignment operator (member)
+Entry Callout multiplication-assignment operator (member): content: Content 1, input: Test Message 1
+Real multiplication-assignment operator (member), content: Content 1, input : Test Message 1
+Exit Callout multiplication-assignment operator (member)
+Entry Callout division-assignment operator (member): content: Content 1, input: Test Message 1
+Real division-assignment operator (member), content: Content 1, input : Test Message 1
+Exit Callout division-assignment operator (member)
+Entry Callout modulo-assignment operator (member): content: Content 1, input: Test Message 1
+Real modulo-assignment operator (member), content: Content 1, input : Test Message 1
+Exit Callout modulo-assignment operator (member)
+Entry Callout bitwise-xor-assignment operator (member): content: Content 1, input: Test Message 1
+Real bitwise-xor-assignment operator (member), content: Content 1, input : Test Message 1
+Exit Callout bitwise-xor-assignment operator (member)
+Entry Callout bitwise-and-assignment operator (member): content: Content 1, input: Test Message 1
+Real bitwise-and-assignment operator (member), content: Content 1, input : Test Message 1
+Exit Callout bitwise-and-assignment operator (member)
+Entry Callout bitwise-or-assignment operator (member): content: Content 1, input: Test Message 1
+Real bitwise-or-assignment operator (member), content: Content 1, input : Test Message 1
+Exit Callout bitwise-or-assignment operator (member)
+Entry Callout right-bitshift-assignment operator (member): content: Content 1, input: Test Message 1
+Real right-bitshift-assignment operator (member), content: Content 1, input : Test Message 1
+Exit Callout right-bitshift-assignment operator (member)
+Entry Callout left-bitshift-assignment operator (member): content: Content 1, input: Test Message 1
+Real left-bitshift-assignment operator (member), content: Content 1, input : Test Message 1
+Exit Callout left-bitshift-assignment operator (member)
+Entry Callout non-equal operator (member): content: Content 1, input: Test Message 1
+Real non-equal operator (member), content: Content 1, input : Test Message 1
+Exit Callout non-equal operator (member): output: true
+operator!= (member) returned true
+Entry Callout less-or-equal (member): content: Content 1, input: Test Message 1
+Real less-or-equal operator (member), content: Content 1, input : Test Message 1
+Exit Callout less-or-equal (member): output: true
+operator<= (member) returned true
+Entry Callout greater-or-equal (member): content: Content 1, input: Test Message 1
+Real greater-or-equal operator (member), content: Content 1, input : Test Message 1
+Exit Callout greater-or-equal (member): output: true
+operator>= (member) returned true
+Entry Callout equality operator (member): content: Content 1, input: Test Message 1
+Real equality operator (member), content: Content 1, input : Test Message 1
+Exit Callout equality operator (member): output: true
+operator== (member) returned true
+Entry Callout right-bitshift operator (member): content: Content 1, input: Test Message 1
+Real right-bitshift operator (member), content: Content 1, input : Test Message 1
+Exit Callout right-bitshift operator (member)
+Entry Callout left-bitshift operator (member): content: Content 1, input: Test Message 1
+Real left-bitshift operator (member), content: Content 1, input : Test Message 1
+Exit Callout left-bitshift operator (member)
+Entry Callout function call operator (member): content: Content 1, input: Test Message 1
+Real function call operator (member), content: Content 1, input : Test Message 1
+Exit Callout function call operator (member): output: Test Message 1
+operator() returned Test Message 1
+Entry Callout array-access operator (member): content: Content 1, input: Test Message 1
+Real array-access operator (member), content: Content 1, input : Test Message 1
+Exit Callout array-access operator (member): output: Test Message 1
+operator[] returned Test Message 1
+Entry Callout logical-and operator (member): content: Content 1, input: Test Message 1
+Real logical-and operator (member), content: Content 1, input : Test Message 1
+Exit Callout logical-and operator (member): output: true
+operator&& (member) returned true
+Entry Callout logical-or operator (member): content: Content 1, input: Test Message 1
+Real logical-or operator (member), content: Content 1, input : Test Message 1
+Exit Callout logical-or operator (member): output: true
+operator|| (member) returned true
+Entry Callout negation operator (member): content: Content 1
+Real negation operator (member), content: Content 1
+Exit Callout negation operator (member): output: true
+operator! (member) returned true
+Entry Callout addition operator (member): content: Content 1, input: Test Message 1
+Real addition operator (member), content: Content 1, input : Test Message 1
+Exit Callout addition operator (member): output: Test Message 1
+operator+ (member) returned Test Message 1
+Entry Callout subtraction operator (member): content: Content 1, input: Test Message 1
+Real subtraction operator (member), content: Content 1, input : Test Message 1
+Exit Callout subtraction operator (member): output: Test Message 1
+operator- (member) returned Test Message 1
+Entry Callout multiplication operator (member): content: Content 1, input: Test Message 1
+Real multiplication operator (member), content: Content 1, input : Test Message 1
+Exit Callout multiplication operator (member): output: Test Message 1
+operator* (member) returned Test Message 1
+Entry Callout division operator (member): content: Content 1, input: Test Message 1
+Real division operator (member), content: Content 1, input : Test Message 1
+Exit Callout division operator (member): output: Test Message 1
+operator/ (member) returned Test Message 1
+Entry Callout modulo operator (member): content: Content 1, input: Test Message 1
+Real modulo operator (member), content: Content 1, input : Test Message 1
+Exit Callout modulo operator (member): output: Test Message 1
+operator% (member) returned Test Message 1
+Entry Callout bitwise-xor operator (member): content: Content 1, input: Test Message 1
+Real bitwise-xor operator (member), content: Content 1, input : Test Message 1
+Exit Callout bitwise-xor operator (member): output: Test Message 1
+operator^ (member) returned Test Message 1
+Entry Callout bitwise-and operator (member): content: Content 1, input: Test Message 1
+Real bitwise-and operator (member), content: Content 1, input : Test Message 1
+Exit Callout bitwise-and operator (member): output: Test Message 1
+operator& (member) returned Test Message 1
+Entry Callout bitwise-or operator (member): content: Content 1, input: Test Message 1
+Real bitwise-or operator (member), content: Content 1, input : Test Message 1
+Exit Callout bitwise-or operator (member): output: Test Message 1
+operator| (member) returned Test Message 1
+Entry Callout bitwise-negation operator (member): content: Content 1
+Real bitwise-negation operator (member), content: Content 1
+Exit Callout bitwise-negation operator (member): output: Content 1
+operator~ (member) returned Content 1
+Entry Callout less-than operator (member): content: Content 1, input: Test Message 1
+Real less-than operator (member), content: Content 1, input : Test Message 1
+Exit Callout less-than operator (member): output: true
+operator< (member) returned true
+Entry Callout greater-than operator (member): content: Content 1, input: Test Message 1
+Real greater-than operator (member), content: Content 1, input : Test Message 1
+Exit Callout greater-than operator (member): output: true
+operator> (member) returned true
+Entry Callout comma operator (member): content: Content 1, input: Test Message 1
+Real comma operator (member), content: Content 1, input : Test Message 1
+Exit Callout comma operator (member): output: Test Message 1
+operator, (member) returned Test Message 1
+Entry Callout pointer-dereference operator (member): content: Content 1
+Real pointer-dereference operator (member), content: Content 1
+Exit Callout pointer-dereference operator (member): output: Content 1
+operator* (member) returned Content 1
+Entry Callout address-of operator (member): content: Content 1
+Real address-of operator (member), content: Content 1
+Exit Callout address-of operator (member): output: Content 1
+operator& (member) returned Content 1
+Entry Callout virtual function derived class: content: Content 1, input: test message derived class call
+Real Derived::Virt, content: Content 1, input: test message derived class call
+Exit Callout virtual function derived class
+Entry Callout pure virtual function derived class: content: Content 1, input: test message derived class call
+Real Derived::PureVirt, content: Content 1, input: test message derived class call
+Exit Callout pure virtual function derived class
+Entry Callout virtual function derived class: content: Content 1, input: test message base class call reference
+Real Derived::Virt, content: Content 1, input: test message base class call reference
+Exit Callout virtual function derived class
+Entry Callout pure virtual function derived class: content: Content 1, input: test message base class call reference
+Real Derived::PureVirt, content: Content 1, input: test message base class call reference
+Exit Callout pure virtual function derived class
+Entry Callout virtual function derived class: content: Content 1, input: test message base class call const reference
+Real Derived::Virt, content: Content 1, input: test message base class call const reference
+Exit Callout virtual function derived class
+Entry Callout pure virtual function derived class: content: Content 1, input: test message base class call const reference
+Real Derived::PureVirt, content: Content 1, input: test message base class call const reference
+Exit Callout pure virtual function derived class
+Entry Callout virtual function derived class: content: Content 1, input: test message base class call pointer
+Real Derived::Virt, content: Content 1, input: test message base class call pointer
+Exit Callout virtual function derived class
+Entry Callout pure virtual function derived class: content: Content 1, input: test message base class call pointer
+Real Derived::PureVirt, content: Content 1, input: test message base class call pointer
+Exit Callout pure virtual function derived class
+Entry Callout virtual function derived class: content: Content 1, input: test message base class call const pointer
+Real Derived::Virt, content: Content 1, input: test message base class call const pointer
+Exit Callout virtual function derived class
+Entry Callout pure virtual function derived class: content: Content 1, input: test message base class call const pointer
+Real Derived::PureVirt, content: Content 1, input: test message base class call const pointer
+Exit Callout pure virtual function derived class
+Entry Callout virtual function base class: content: Content 1, input: test message non-override call
+Real Base::Virt, content: Content 1, input: test message non-override call
+Exit Callout virtual function base class
+Entry Callout template class normal member function: content: Content 1, input: Test Message 1
+Real Member, content: Content 1, input: Test Message 1
+Exit Callout template class normal member function
+Entry Callout template class template member function: content: Content 1, input: Test Message 1
+Real TemplateMember, content: Content 1, input: Test Message 1
+Exit Callout template class template member function
+Entry Callout prefix increment operator (free function): input: Test Message 1
+Real prefix increment operator (free function), input: Test Message 1
+Exit Callout prefix increment operator (free function)
+Entry Callout postfix increment operator (free function): input: Test Message 1
+Real postfix increment operator (free function), input: Test Message 1
+Exit Callout postfix increment operator (free function)
+Entry Callout prefix decrement operator (free function): input: Test Message 1
+Real prefix decrement operator (free function), input: Test Message 1
+Exit Callout prefix decrement operator (free function)
+Entry Callout postfix decrement operator (free function): input: Test Message 1
+Real postfix decrement operator (free function), input: Test Message 1
+Exit Callout postfix decrement operator (free function)
+Entry Callout addition-assignment operator (free function): input 1: Test Message 1, input 2: Test Message 2
+Real addition-assignment operator (free function), input 1: Test Message 1, input 2: Test Message 2
+Exit Callout addition-assignment operator (free function)
+Entry Callout subtraction-assignment operator (free function): input 1: Test Message 1, input 2: Test Message 2
+Real subtraction-assignment operator (free function), input 1: Test Message 1, input 2: Test Message 2
+Exit Callout subtraction-assignment operator (free function)
+Entry Callout multiplication-assignment operator (free function): input 1: Test Message 1, input 2: Test Message 2
+Real multiplication-assignment operator (free function), input 1: Test Message 1, input 2: Test Message 2
+Exit Callout multiplication-assignment operator (free function)
+Entry Callout division-assignment operator (free function): input 1: Test Message 1, input 2: Test Message 2
+Real division-assignment operator (free function), input 1: Test Message 1, input 2: Test Message 2
+Exit Callout division-assignment operator (free function)
+Entry Callout modulo-assignment operator (free function): input 1: Test Message 1, input 2: Test Message 2
+Real modulo-assignment operator (free function), input 1: Test Message 1, input 2: Test Message 2
+Exit Callout modulo-assignment operator (free function)
+Entry Callout bitwise-xor-assignment operator (free function): input 1: Test Message 1, input 2: Test Message 2
+Real bitwise-xor-assignment operator (free function), input 1: Test Message 1, input 2: Test Message 2
+Exit Callout bitwise-xor-assignment operator (free function)
+Entry Callout bitwise-and-assignment operator (free function): input 1: Test Message 1, input 2: Test Message 2
+Real bitwise-and-assignment operator (free function), input 1: Test Message 1, input 2: Test Message 2
+Exit Callout bitwise-and-assignment operator (free function)
+Entry Callout bitwise-or-assignment operator (free function): input 1: Test Message 1, input 2: Test Message 2
+Real bitwise-or-assignment operator (free function), input 1: Test Message 1, input 2: Test Message 2
+Exit Callout bitwise-or-assignment operator (free function)
+Entry Callout right-bitshift-assignment operator (free function): input 1: Test Message 1, input 2: Test Message 2
+Real right-bitshift-assignment operator (free function), input 1: Test Message 1, input 2: Test Message 2
+Exit Callout right-bitshift-assignment operator (free function)
+Entry Callout left-bitshift-assignment operator (free function): input 1: Test Message 1, input 2: Test Message 2
+Real left-bitshift-assignment operator (free function), input 1: Test Message 1, input 2: Test Message 2
+Exit Callout left-bitshift-assignment operator (free function)
+Entry Callout non-equal operator operator (free function): input 1: Test Message 1, input 2: Test Message 2
+Real non-equal operator (free function), input 1: Test Message 1, input 2: Test Message 2
+Exit Callout non-equal operator (free function): output: true
+operator!= (free) returned true
+Entry Callout less-or-equal operator (free function): input 1: Test Message 1, input 2: Test Message 2
+Real less-or-equal operator (free function), input 1: Test Message 1, input 2: Test Message 2
+Exit Callout less-or-equal operator (free function): output: true
+operator<= (free) returned true
+Entry Callout greater-or-equal operator (free function): input 1: Test Message 1, input 2: Test Message 2
+Real greater-or-equal operator (free function), input 1: Test Message 1, input 2: Test Message 2
+Exit Callout greater-or-equal operator (free function): output: true
+operator>= (free) returned true
+Entry Callout equality operator (free function): input 1: Test Message 1, input 2: Test Message 2
+Real equality operator (free function), input 1: Test Message 1, input 2: Test Message 2
+Exit Callout equality operator (free function): output: true
+operator== (free) returned true
+Entry Callout right-bitshift operator (free function): input 1: Test Message 1, input 2: Test Message 2
+Real right-bitshift operator (free function), input 1: Test Message 1, input 2: Test Message 2
+Exit Callout right-bitshift operator (free function)
+Entry Callout left-bitshift operator (free function): input 1: Test Message 1, input 2: Test Message 2
+Real left-bitshift operator (free function), input 1: Test Message 1, input 2: Test Message 2
+Exit Callout left-bitshift operator (free function)
+Entry Callout logical-and operator (free function): input 1: Test Message 1, input 2: Test Message 2
+Real logical-and operator (free function), input 1: Test Message 1, input 2: Test Message 2
+Exit Callout logical-and operator (free function): output: true
+operator&& (free) returned true
+Entry Callout logical-or operator (free function): input 1: Test Message 1, input 2: Test Message 2
+Real logical-or operator (free function), input 1: Test Message 1, input 2: Test Message 2
+Exit Callout logical-or operator (free function): output: true
+operator|| (free) returned true
+Entry Callout negation operator (free function): input: Test Message 1
+Real negation operator (free function), input: Test Message 1
+Exit Callout negation operator (free function): output: true
+operator! (free) returned true
+Entry Callout addition operator (free function): input 1: Test Message 1, input 2: Test Message 2
+Real addition operator (free function), input 1: Test Message 1, input 2: Test Message 2
+Exit Callout addition operator (free function): output: Test Message 1
+operator+ (free) returned Test Message 1
+Entry Callout subtraction operator (free function): input 1: Test Message 1, input 2: Test Message 2
+Real subtraction operator (free function), input 1: Test Message 1, input 2: Test Message 2
+Exit Callout subtraction operator (free function): output: Test Message 1
+operator- (free) returned Test Message 1
+Entry Callout multiplication operator (free function): input 1: Test Message 1, input 2: Test Message 2
+Real multiplication operator (free function), input 1: Test Message 1, input 2: Test Message 2
+Exit Callout multiplication operator (free function): output: Test Message 1
+operator* (free) returned Test Message 1
+Entry Callout division operator (free function): input 1: Test Message 1, input 2: Test Message 2
+Real division operator (free function), input 1: Test Message 1, input 2: Test Message 2
+Exit Callout division operator (free function): output: Test Message 1
+operator/ (free) returned Test Message 1
+Entry Callout modulo operator (free function): input 1: Test Message 1, input 2: Test Message 2
+Real modulo operator (free function), input 1: Test Message 1, input 2: Test Message 2
+Exit Callout modulo operator (free function): output: Test Message 1
+operator% (free) returned Test Message 1
+Entry Callout bitwise-xor operator (free function): input 1: Test Message 1, input 2: Test Message 2
+Real bitwise-xor operator (free function), input 1: Test Message 1, input 2: Test Message 2
+Exit Callout bitwise-xor operator (free function): output: Test Message 1
+operator^ (free) returned Test Message 1
+Entry Callout bitwise-and operator (free function): input 1: Test Message 1, input 2: Test Message 2
+Real bitwise-and operator (free function), input 1: Test Message 1, input 2: Test Message 2
+Exit Callout bitwise-and operator (free function): output: Test Message 1
+operator& (free) returned Test Message 1
+Entry Callout bitwise-or operator (free function): input 1: Test Message 1, input 2: Test Message 2
+Real bitwise-or operator (free function), input 1: Test Message 1, input 2: Test Message 2
+Exit Callout bitwise-or operator (free function): output: Test Message 1
+operator| (free) returned Test Message 1
+Entry Callout bitwise-negation operator (free function): input: Test Message 1
+Real bitwise-negation operator (free function), input: Test Message 1
+Exit Callout bitwise-negation operator (free function): output: Test Message 1
+operator~ (free) returned Test Message 1
+Entry Callout less-than operator (free function): input 1: Test Message 1, input 2: Test Message 2
+Real less-than operator (free function), input 1: Test Message 1, input 2: Test Message 2
+Exit Callout less-than operator (free function): output: true
+operator< (free) returned true
+Entry Callout greater-than operator (free function): input 1: Test Message 1, input 2: Test Message 2
+Real greater-than operator (free function), input 1: Test Message 1, input 2: Test Message 2
+Exit Callout greater-than operator (free function): output: true
+operator> (free) returned true
+Entry Callout comma operator (free function): input 1: Test Message 1, input 2: Test Message 2
+Real comma operator (free function), input 1: Test Message 1, input 2: Test Message 2
+Exit Callout comma operator (free function): output: Test Message 1
+operator, (free) returned Test Message 1
+Entry Callout pointer-dereference operator (free function): input: Test Message 1
+Real pointer-dereference operator (free function), input: Test Message 1
+Exit Callout pointer-dereference operator (free function): output: Test Message 1
+operator* (free) returned Test Message 1
+Entry Callout address-of operator (free function): input: Test Message 1
+Real address-of operator (free function), input: Test Message 1
+Exit Callout address-of operator (free function): output: Test Message 1
+operator& (free) returned Test Message 1

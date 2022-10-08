@@ -13,6 +13,9 @@
  * PERFORMANCE OF THIS SOFTWARE.
  ******************************************************************************/
 
-#include "test_interface.h"
+#ifndef TEST_INTERFACE_H_
+#define TEST_INTERFACE_H_
 
-int main(int, char **) { RunTests(); }
+void RunTests();
+
+#endif // TEST_INTERFACE_H_

@@ -210,6 +210,10 @@ To add this software to an existing CMake project
   the tracing of function calls shall take place.
 - set the CMake variable *TARGET_FILE* to the absolute path to the Tracing
   Configuration File.
+- set the CMake variable *TRACE_CMAKE_CONFIG_WORKING_DIR* to the absolute path
+  to the working directory used for configuring the CMake project.
+- set the CMake variable *TRACE_CMAKE_BUILD_WORKING_DIR* to the absolute path
+  to the working directory used for building the CMake project.
 - add the ```Tracing``` directory as subdirectory **after** all settings to the
   executable target selected for tracing have been done.
 
@@ -243,6 +247,13 @@ how the build should behave:
   required so changes to files take effect. This setting is recommended for
   setups where a build always happens from a clean state (e.g. CI systems that
   use a new container environment for each job).
+
+If the CMake project contains many source files but only a subset of these
+source files is relevant for tracing (= contains definitions of traced
+functions), performance can be improved by using the *TRACE_PATH_FILTER* CMake
+variable. That variable can be set to a list of strings. Only files whose
+absolute paths contain at least one of the strings in that list will be
+considered when analyzing the traced source code.
 
 The ```Tracing/generated/tracing_callouts.cpp``` file is generated with the
 CMake configuration. So at least one CMake configuration needs to be done after

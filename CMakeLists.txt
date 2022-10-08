@@ -23,17 +23,26 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 set(CMAKE_BUILD_TYPE "Debug")
 
-set(TARGET TraceTest)
+set(LIBRARY_TARGET TestLibrary)
 
-add_executable(${TARGET} ${CMAKE_CURRENT_SOURCE_DIR}/Test/test.cpp ${CMAKE_CURRENT_SOURCE_DIR}/Test/main.cpp)
+add_library(${LIBRARY_TARGET} ${CMAKE_CURRENT_SOURCE_DIR}/Test/test.cpp ${CMAKE_CURRENT_SOURCE_DIR}/Test/test_interface.cpp)
 
-target_include_directories(${TARGET} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Test)
+target_include_directories(${LIBRARY_TARGET} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Test)
+
+set(EXECUTABLE_TARGET TraceTest)
+
+add_executable(${EXECUTABLE_TARGET} ${CMAKE_CURRENT_SOURCE_DIR}/Test/main.cpp)
+
+target_link_libraries(${EXECUTABLE_TARGET} ${LIBRARY_TARGET})
 
 # Everything up to here is the (admittedly very small) CMake project as it would
 # be without tracing of function calls. The following lines are what enables
 # tracing.
 
-set(TRACE_TARGET ${TARGET})
+set(TRACE_TARGET ${EXECUTABLE_TARGET})
 set(TARGET_FILE "${CMAKE_CURRENT_SOURCE_DIR}/Test/traced_functions.yml")
+set(TRACE_CMAKE_CONFIG_WORKING_DIR "${CMAKE_BINARY_DIR}")
+set(TRACE_CMAKE_BUILD_WORKING_DIR "${CMAKE_BINARY_DIR}")
+set(TRACE_PATH_FILTER "Test/test")
 
 add_subdirectory(Tracing)

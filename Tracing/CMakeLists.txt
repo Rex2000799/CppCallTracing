@@ -32,6 +32,13 @@
 #   - "REBUILD": Source files are compiled twice. Dependencies are kept intact.
 #                Redundant build can be mitigated by ccache.
 #   This variable is optional, it defaults to REBUILD if not set.
+# - TRACE_CMAKE_CONFIG_WORKING_DIR: Working directory of CMake configuration.
+# - TRACE_CMAKE_BUILD_WORKING_DIR: Working directory of CMake build.
+# - TRACE_PATH_FILTER: List of strings. Only files whose absolute path contains
+#                      at least one of these strings are considered when
+#                      searching for definition of traced functions.
+#                      Optional variable, all files of the CMake project are
+#                      considered if not set.
 #
 # Usage:
 # Ensure the variables are set, then include the subdirectory with this file as
@@ -50,6 +57,9 @@
 #
 # Input parameters:
 # - COMPILE_COMMANDS_FILE: Absolute path to the compile_commands.json file.
+# - PATH_FILTER: List of strings to use for filtering (= ignore all sources and
+#                respective binaries that do not have at least one of these
+#                strings in their path). Empty list means to process all files.
 #
 # Output parameters (variables set in the calling scope):
 # - OBJECT_FILES_LIST_SOURCES: List of absolute paths of source files.
@@ -61,7 +71,7 @@
 # In case the function fails (e.g. file can not be opened or parsing fails),
 # execution is aborted immediately and the function does not return.
 ##################################
-function(parse_compile_commands COMPILE_COMMANDS_FILE)
+function(parse_compile_commands COMPILE_COMMANDS_FILE PATH_FILTER)
   set(OBJECT_FILES_LIST_SOURCES_TEMP)
   set(OBJECT_FILES_LIST_OBJECTS_TEMP)
 
@@ -112,15 +122,31 @@ function(parse_compile_commands COMPILE_COMMANDS_FILE)
         list(GET CURRENT_CMD ${OBJECT_FILE_PATH_INDEX} OBJECT_FILE_PATH)
         string(PREPEND OBJECT_FILE_PATH "${CURRENT_DIR}/")
 
-        if(NOT EXISTS "${OBJECT_FILE_PATH}")
+        set(MATCH_FOUND FALSE)
 
-          message(SEND_ERROR "Object file ${OBJECT_FILE_PATH} for json object with index ${SOURCE_FILE_INDEX} in file ${COMPILE_COMMANDS_FILE} has not been found.")
+        if(PATH_FILTER)
+          foreach(CURRENT_FILTER ${PATH_FILTER})
+            string(FIND "${CURRENT_FILE}" "${CURRENT_FILTER}" MATCHRES)
 
+            if(NOT ${MATCHRES} EQUAL -1)
+              set(MATCH_FOUND TRUE)
+            endif()
+          endforeach()
         else()
+          set(MATCH_FOUND TRUE)
+        endif()
 
-          list(APPEND OBJECT_FILES_LIST_SOURCES_TEMP "${CURRENT_FILE}")
-          list(APPEND OBJECT_FILES_LIST_OBJECTS_TEMP "${OBJECT_FILE_PATH}")
+        if(MATCH_FOUND)
+          if(NOT EXISTS "${OBJECT_FILE_PATH}")
 
+            message(WARNING "Object file ${OBJECT_FILE_PATH} for json object with index ${SOURCE_FILE_INDEX} in file ${COMPILE_COMMANDS_FILE} has not been found.")
+
+          else()
+
+            list(APPEND OBJECT_FILES_LIST_SOURCES_TEMP "${CURRENT_FILE}")
+            list(APPEND OBJECT_FILES_LIST_OBJECTS_TEMP "${OBJECT_FILE_PATH}")
+
+          endif()
         endif()
       endif()
     endif()
@@ -132,8 +158,36 @@ function(parse_compile_commands COMPILE_COMMANDS_FILE)
 endfunction()
 
 ##################################
+# Outputs all non-imported library targets linked to a target (resolving 
+# transitive dependencies).
+#
+# Taken from https://stackoverflow.com/questions/32756195/
+# recursive-list-of-link-libraries-in-cmake/39127212#39127212
+##################################
+function(get_link_libraries OUTPUT_LIST TARGET)
+  get_target_property(IMPORTED ${TARGET} IMPORTED)
+  list(APPEND VISITED_TARGETS ${TARGET})
+  set(LIB_TARGETS "")
+  if(NOT IMPORTED)
+    get_target_property(LIBS ${TARGET} LINK_LIBRARIES)
+    foreach(LIB ${LIBS})
+      if(TARGET ${LIB})
+        list(FIND VISITED_TARGETS ${LIB} VISITED)
+        if(${VISITED} EQUAL -1)
+          get_link_libraries(LINK_LIB_TARGETS ${LIB})
+          list(APPEND LIB_TARGETS ${LIB} ${LINK_LIB_TARGETS})
+        endif()
+      endif()
+    endforeach()
+  endif()
+  set(${OUTPUT_LIST} ${LIB_TARGETS} PARENT_SCOPE)
+  set(VISITED_TARGETS ${VISITED_TARGETS} PARENT_SCOPE)
+endfunction()
+
+##################################
 # Actual activity.
 ##################################
+set(USE_NEW_GCC_VERSION FALSE)
 
 # TRACE_BUILD_VERBOSE is only used as if-condition. This causes the CMake
 # warning that it is not used. Suppress this warning.
@@ -151,6 +205,21 @@ else()
   message(FATAL_ERROR "Value ${TRACE_MANGLING_RESOLUTION_ALGORITHM} for TRACE_MANGLING_RESOLUTION_ALGORITHM invalid. Options are \"REUSE\" and \"REBUILD\".")
 endif()
 
+if(NOT DEFINED TRACE_CMAKE_CONFIG_WORKING_DIR)
+  message(FATAL_ERROR "Variable \"TRACE_CMAKE_CONFIG_WORKING_DIR\" not set.")
+elseif(NOT EXISTS "${TRACE_CMAKE_CONFIG_WORKING_DIR}")
+  message(FATAL_ERROR "Directory ${TRACE_CMAKE_CONFIG_WORKING_DIR} not found.")
+endif()
+
+if(NOT DEFINED TRACE_CMAKE_BUILD_WORKING_DIR)
+  message(FATAL_ERROR "Variable \"TRACE_CMAKE_BUILD_WORKING_DIR\" not set.")
+elseif(NOT EXISTS "${TRACE_CMAKE_BUILD_WORKING_DIR}")
+  message(FATAL_ERROR "Directory ${TRACE_CMAKE_BUILD_WORKING_DIR} not found.")
+endif()
+
+if(NOT DEFINED TRACE_PATH_FILTER)
+  set(TRACE_PATH_FILTER "")
+endif()
 
 if(NOT DEFINED TRACE_TARGET)
   message(FATAL_ERROR "Variable \"TRACE_TARGET\" not set.")
@@ -159,18 +228,31 @@ elseif(NOT DEFINED TARGET_FILE)
 elseif(NOT EXISTS "${TARGET_FILE}")
   message(FATAL_ERROR "File ${TARGET_FILE} not found.")
 else()
+  set(ALL_LINKED_LIBRARIES "")
+
+  get_link_libraries(ALL_LINKED_LIBRARIES ${TRACE_TARGET})
+
+  set(ALL_TARGETS "${TRACE_TARGET}")
+  list(APPEND ALL_TARGETS ${ALL_LINKED_LIBRARIES})
 
   # Set option to generate class structure files.
   # Needs to be set in normal and nested build so ccache will find the options
   # being the same.
-  if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-    set(COMPILER_SELECTION_FLAG "gcc")
-    target_compile_options("${TRACE_TARGET}" PUBLIC "-fdump-lang-class")
-  elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    set(COMPILER_SELECTION_FLAG "clang")
-  else()
-    message(FATAL_ERROR "C++ compiler ${CMAKE_CXX_COMPILER_ID} is not supported for tracing.")
-  endif()
+  foreach(CURRENT_TARGET ${ALL_TARGETS})
+    if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+      set(COMPILER_SELECTION_FLAG "gcc")
+      if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "8.0.0")
+        target_compile_options("${CURRENT_TARGET}" PUBLIC "-fdump-class-hierarchy")
+      else()
+        target_compile_options("${CURRENT_TARGET}" PUBLIC "-fdump-lang-class")
+        set(USE_NEW_GCC_VERSION TRUE)
+      endif()
+    elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+      set(COMPILER_SELECTION_FLAG "clang")
+    else()
+      message(FATAL_ERROR "C++ compiler ${CMAKE_CXX_COMPILER_ID} is not supported for tracing.")
+    endif()
+  endforeach()
 
   # Setup wrapper for ccache.
   # Approach taken from https://crascit.com/2016/04/09/using-ccache-with-cmake.
@@ -194,6 +276,9 @@ else()
   set(CALLOUT_HEADER "${CMAKE_CURRENT_SOURCE_DIR}/generated/${CALLOUT_HEADER_FILENAME}")
   ## Location to put generated file with callout function definitions to.
   set(CALLOUT_FILE "${CMAKE_CURRENT_SOURCE_DIR}/generated/tracing_callouts.cpp")
+  if(TRACE_PATH_FILTER)
+    list(APPEND TRACE_PATH_FILTER ${CALLOUT_FILE})
+  endif()
 
   # It is important that CALLOUT_HEADER and CALLOUT_FILE are in the same
   # directory as CALLOUT_FILE will include CALLOUT_HEADER with #include "" which
@@ -240,26 +325,49 @@ else()
     # Get command line arguments passed to current invocation of CMake.
     execute_process(COMMAND bash -c "tr '\\0' ' ' < /proc/$PPID/cmdline"
                     OUTPUT_VARIABLE COMMAND_LINE)
-    set(WORKDIR ${CMAKE_BINARY_DIR})
+
+    # Get number of cores on machine.
+    execute_process(COMMAND bash -c "nproc"
+                    OUTPUT_VARIABLE NPROC OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+    set(NEST_RESULT -1)
 
     separate_arguments(COMMAND_LINE)
     list(GET COMMAND_LINE 0 FIRST_ITEM)
     if(${FIRST_ITEM} STREQUAL "cmake")
       list(POP_FRONT COMMAND_LINE)
     endif()
+    message(INFO " Executing: ${CMAKE_COMMAND} ${COMMAND_LINE} -DTRACE_NESTED_BUILD=ON ${CMAKE_SOURCE_DIR} -DCMAKE_EXPORT_COMPILE_COMMANDS=1 WORKING_DIRECTORY ${TRACE_CMAKE_CONFIG_WORKING_DIR}")
     execute_process(COMMAND ${CMAKE_COMMAND} ${COMMAND_LINE}
                             -DTRACE_NESTED_BUILD=ON
                             ${CMAKE_SOURCE_DIR}
                             -DCMAKE_EXPORT_COMPILE_COMMANDS=1
-                   WORKING_DIRECTORY "${WORKDIR}")
-    execute_process(COMMAND ${CMAKE_COMMAND} --build . --target ${TRACE_TARGET}
-                    WORKING_DIRECTORY "${WORKDIR}")
+                   WORKING_DIRECTORY "${TRACE_CMAKE_CONFIG_WORKING_DIR}"
+                   RESULT_VARIABLE NEST_RESULT)
+
+    if(NOT "${NEST_RESULT}" EQUAL 0)
+      message(FATAL_ERROR "CMake configuration for nested build failed.")
+    endif()
+
+    set(NEST_RESULT -1)
+
+    message(INFO " Executing: ${CMAKE_COMMAND} --build . --target ${TRACE_TARGET} --parallel ${NPROC} WORKING_DIRECTORY ${TRACE_CMAKE_BUILD_WORKING_DIR}")
+    execute_process(COMMAND ${CMAKE_COMMAND}
+                            --build .
+                            --target ${TRACE_TARGET}
+                            --parallel ${NPROC}
+                   WORKING_DIRECTORY "${TRACE_CMAKE_BUILD_WORKING_DIR}"
+                   RESULT_VARIABLE NEST_RESULT)
+
+    if(NOT "${NEST_RESULT}" EQUAL 0)
+      message(FATAL_ERROR "Nested build failed.")
+    endif()
 
     ##################################
     # Parse compile_commands.json
     ##################################
 
-    parse_compile_commands("${CMAKE_BINARY_DIR}/compile_commands.json")
+    parse_compile_commands("${CMAKE_BINARY_DIR}/compile_commands.json" "${TRACE_PATH_FILTER}")
 
     ##################################
     # Implementation of TRACE_MANGLING_RESOLUTION_ALGORITHM=REUSE 
@@ -311,9 +419,15 @@ else()
     set(OBJECT_FILES_LIST_BINARIES)
 
     foreach(OBJECT_FILE_PATH ${OBJECT_FILES_LIST_OBJECTS})
-      string(REGEX REPLACE "\.o$" "\.cpp\.001l\.class" STRUCTURE_FILE_PATH "${OBJECT_FILE_PATH}")
+      if(USE_NEW_GCC_VERSION)
+        string(REGEX REPLACE "\.o$" "\.cpp\.001l\.class" STRUCTURE_FILE_PATH "${OBJECT_FILE_PATH}")
+      else()
+        string(REGEX REPLACE "\.o$" "\.002t\.class" STRUCTURE_FILE_PATH "${OBJECT_FILE_PATH}")
+      endif()
       if(NOT EXISTS "${STRUCTURE_FILE_PATH}")
-        message(WARNING "Class structure file ${STRUCTURE_FILE_PATH} not found. Skipping.")
+        if(DEFINED TRACE_BUILD_VERBOSE)
+          message(WARNING "Class structure file ${STRUCTURE_FILE_PATH} not found. Skipping.")
+        endif()
       else()
         string(APPEND OBJECT_FILES_LIST_CLASS_STRUCTURE "${STRUCTURE_FILE_PATH}\n")
       endif()
@@ -322,13 +436,13 @@ else()
 
     # Input to code generation.
     ## List of class structure files.
-    set(CLASS_STRUCTURE_LIST_FILE "${CMAKE_BINARY_DIR}/Tracing/class_structure_files_list.txt")
+    set(CLASS_STRUCTURE_LIST_FILE "${CMAKE_CURRENT_BINARY_DIR}/class_structure_files_list.txt")
     ## List of compiled binary files.
-    set(BINARY_LIST_FILE "${CMAKE_BINARY_DIR}/Tracing/binary_files_list.txt")
+    set(BINARY_LIST_FILE "${CMAKE_CURRENT_BINARY_DIR}/binary_files_list.txt")
     ## Location to put output file with mangled names of wrapped functions to.
-    set(FUNCTIONS_FILE "${CMAKE_BINARY_DIR}/Tracing/functions_mangled.txt")
+    set(FUNCTIONS_FILE "${CMAKE_CURRENT_BINARY_DIR}/functions_mangled.txt")
     ## Location to put generated file with wrapper functions to.
-    set(WRAPPER_FILE "${CMAKE_BINARY_DIR}/Tracing/tracing_wrappers.cpp")
+    set(WRAPPER_FILE "${CMAKE_CURRENT_BINARY_DIR}/tracing_wrappers.cpp")
 
     file(WRITE "${CLASS_STRUCTURE_LIST_FILE}" "${OBJECT_FILES_LIST_CLASS_STRUCTURE}")
 

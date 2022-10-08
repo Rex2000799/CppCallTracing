@@ -230,16 +230,14 @@ if function_info == None:
 if verbose_logging:
   for current_function in function_info:
     if function_info[current_function] == None:
-      message = "No overload found for function \"" + current_function
-      message = message + "\" with parameters " + str(params) + "."
+      message = "No overload found for function \"" + current_function + "\"."
       print(message)
     else:
       for current_overload in function_info[current_function]:
         mangled_name = current_overload.mangled_name
         params = current_overload.params
-        message = "Function \"" + current_function + "\" with parameters "
-        message = message + str(params) + " maps to mangled name \""
-        message = message + mangled_name + "\"."
+        message = "Function \"" + current_function
+        message = message + "\" maps to mangled name \"" + mangled_name + "\"."
         print(message)
 
 

@@ -159,9 +159,10 @@ endfunction()
 
 ##################################
 # Outputs all non-imported library targets linked to a target (resolving 
-# transitive dependencies).
+# transitive dependencies). Alias targets are resolved to the underlying actual
+# target.
 #
-# Taken from https://stackoverflow.com/questions/32756195/
+# Basic idea taken from https://stackoverflow.com/questions/32756195/
 # recursive-list-of-link-libraries-in-cmake/39127212#39127212
 ##################################
 function(get_link_libraries OUTPUT_LIST TARGET)
@@ -172,10 +173,21 @@ function(get_link_libraries OUTPUT_LIST TARGET)
     get_target_property(LIBS ${TARGET} LINK_LIBRARIES)
     foreach(LIB ${LIBS})
       if(TARGET ${LIB})
-        list(FIND VISITED_TARGETS ${LIB} VISITED)
+        set(OUT_LIB "")
+        set(ACTUAL_LIB "")
+        get_target_property(OUT_LIB ${LIB} ALIASED_TARGET)
+        if(${OUT_LIB} STREQUAL "OUT_LIB-NOTFOUND")
+          set(ACTUAL_LIB ${LIB})
+        else()
+          set(ACTUAL_LIB ${OUT_LIB})
+          # Add the alias name here as in recursive call only the actual target
+          # will be added.
+          list(APPEND VISITED_TARGETS ${LIB})
+        endif()
+        list(FIND VISITED_TARGETS ${ACTUAL_LIB} VISITED)
         if(${VISITED} EQUAL -1)
-          get_link_libraries(LINK_LIB_TARGETS ${LIB})
-          list(APPEND LIB_TARGETS ${LIB} ${LINK_LIB_TARGETS})
+          get_link_libraries(LINK_LIB_TARGETS ${ACTUAL_LIB})
+          list(APPEND LIB_TARGETS ${ACTUAL_LIB} ${LINK_LIB_TARGETS})
         endif()
       endif()
     endforeach()

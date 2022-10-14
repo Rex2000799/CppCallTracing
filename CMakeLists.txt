@@ -29,11 +29,13 @@ add_library(${LIBRARY_TARGET} ${CMAKE_CURRENT_SOURCE_DIR}/Test/test.cpp ${CMAKE_
 
 target_include_directories(${LIBRARY_TARGET} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Test)
 
+add_library(TestLibrary::Alias ALIAS ${LIBRARY_TARGET})
+
 set(EXECUTABLE_TARGET TraceTest)
 
 add_executable(${EXECUTABLE_TARGET} ${CMAKE_CURRENT_SOURCE_DIR}/Test/main.cpp)
 
-target_link_libraries(${EXECUTABLE_TARGET} ${LIBRARY_TARGET})
+target_link_libraries(${EXECUTABLE_TARGET} TestLibrary::Alias)
 
 # Everything up to here is the (admittedly very small) CMake project as it would
 # be without tracing of function calls. The following lines are what enables

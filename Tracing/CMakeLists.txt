@@ -36,7 +36,8 @@
 # - TRACE_CMAKE_BUILD_WORKING_DIR: Working directory of CMake build.
 # - TRACE_PATH_FILTER: List of strings. Only files whose absolute path contains
 #                      at least one of these strings are considered when
-#                      searching for definition of traced functions.
+#                      searching for definition of traced functions. The filters
+#                      must NOT contain spaces.
 #                      Optional variable, all files of the CMake project are
 #                      considered if not set.
 #
@@ -72,86 +73,38 @@
 # execution is aborted immediately and the function does not return.
 ##################################
 function(parse_compile_commands COMPILE_COMMANDS_FILE PATH_FILTER)
+  # The parsing done here by calling a python script could also have been done
+  # using CMake. However, this turned out to be so slow that doing this in a
+  # separate python process is significantly faster.
   set(OBJECT_FILES_LIST_SOURCES_TEMP)
   set(OBJECT_FILES_LIST_OBJECTS_TEMP)
 
-  file(READ "${COMPILE_COMMANDS_FILE}" COMPILE_COMMANDS)
+  set(SOURCE_LIST_FILE "${CMAKE_CURRENT_BINARY_DIR}/source_files_list.txt")
+  set(OBJECT_LIST_FILE "${CMAKE_CURRENT_BINARY_DIR}/object_files_list.txt")
 
-  string(REGEX MATCHALL "}," OBJECT_SEPARATOR_LIST "${COMPILE_COMMANDS}")
-  list(LENGTH OBJECT_SEPARATOR_LIST OBJECT_SEPARATORS)
+  set(FILTER_STRING "")
 
-  foreach(SOURCE_FILE_INDEX RANGE ${OBJECT_SEPARATORS})
-    set(CURRENT_DIR "")
-    set(CURRENT_CMD "")
-    set(CURRENT_FILE "")
+  set(FIRST TRUE)
 
-    string(JSON CURRENT_DIR GET ${COMPILE_COMMANDS} ${SOURCE_FILE_INDEX} directory)
-    string(JSON CURRENT_CMD GET ${COMPILE_COMMANDS} ${SOURCE_FILE_INDEX} command)
-    string(JSON CURRENT_FILE GET ${COMPILE_COMMANDS} ${SOURCE_FILE_INDEX} file)
-
-    if("${CURRENT_DIR}" STREQUAL "")
-
-      message(SEND_ERROR "\"directory\" not set in file ${COMPILE_COMMANDS_FILE} for json object with index ${SOURCE_FILE_INDEX}.")
-
-    elseif("${CURRENT_CMD}" STREQUAL "")
-
-      message(SEND_ERROR "\"command\" not set in file ${COMPILE_COMMANDS_FILE} for json object with index ${SOURCE_FILE_INDEX}.")
-
-    elseif("${CURRENT_FILE}" STREQUAL "")
-
-      message(SEND_ERROR "\"file\" not set in file ${COMPILE_COMMANDS_FILE} for json object with index ${SOURCE_FILE_INDEX}.")
-
+  foreach(CURRENT_FILTER ${PATH_FILTER})
+    if(FIRST)
+      set(FIRST FALSE)
     else()
-
-      separate_arguments(CURRENT_CMD)
-      list(LENGTH CURRENT_CMD COMMAND_LENGTH)
-      math(EXPR LAST_COMMAND_INDEX "${COMMAND_LENGTH} - 1" OUTPUT_FORMAT DECIMAL)
-      list(FIND CURRENT_CMD "-o" OBJECT_FLAG_INDEX)
-
-      if(OBJECT_FLAG_INDEX LESS 0)
-
-        message(SEND_ERROR "No -o flag found in \"command\" of json object index ${SOURCE_FILE_INDEX} in file ${COMPILE_COMMANDS_FILE}.")
-
-      elseif(${OBJECT_FLAG_INDEX} GREATER_EQUAL LAST_COMMAND_INDEX)
-
-        message(SEND_ERROR "-o flag found in \"command\" of json object index ${SOURCE_FILE_INDEX} in file ${COMPILE_COMMANDS_FILE} is last part of command, missing object file path.")
-
-      else()
-
-        math(EXPR OBJECT_FILE_PATH_INDEX "${OBJECT_FLAG_INDEX} + 1" OUTPUT_FORMAT DECIMAL)
-        list(GET CURRENT_CMD ${OBJECT_FILE_PATH_INDEX} OBJECT_FILE_PATH)
-        string(PREPEND OBJECT_FILE_PATH "${CURRENT_DIR}/")
-
-        set(MATCH_FOUND FALSE)
-
-        if(PATH_FILTER)
-          foreach(CURRENT_FILTER ${PATH_FILTER})
-            string(FIND "${CURRENT_FILE}" "${CURRENT_FILTER}" MATCHRES)
-
-            if(NOT ${MATCHRES} EQUAL -1)
-              set(MATCH_FOUND TRUE)
-            endif()
-          endforeach()
-        else()
-          set(MATCH_FOUND TRUE)
-        endif()
-
-        if(MATCH_FOUND)
-          if(NOT EXISTS "${OBJECT_FILE_PATH}")
-
-            message(WARNING "Object file ${OBJECT_FILE_PATH} for json object with index ${SOURCE_FILE_INDEX} in file ${COMPILE_COMMANDS_FILE} has not been found.")
-
-          else()
-
-            list(APPEND OBJECT_FILES_LIST_SOURCES_TEMP "${CURRENT_FILE}")
-            list(APPEND OBJECT_FILES_LIST_OBJECTS_TEMP "${OBJECT_FILE_PATH}")
-
-          endif()
-        endif()
-      endif()
+      string(APPEND FILTER_STRING " ")
     endif()
-
+    string(APPEND FILTER_STRING "${CURRENT_FILTER}")
   endforeach()
+
+  set(PARSE_RESULT -1)
+
+  execute_process(COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/parse_compile_commands.sh" "${COMPILE_COMMANDS_FILE}" "${SOURCE_LIST_FILE}" "${OBJECT_LIST_FILE}" "${FILTER_STRING}" RESULT_VARIABLE PARSE_RESULT)
+
+  if(NOT "${PARSE_RESULT}" EQUAL 0)
+    message(FATAL_ERROR "Parsing ${COMPILE_COMMANDS_FILE} failed.")
+  endif()
+
+  file(READ "${SOURCE_LIST_FILE}" OBJECT_FILES_LIST_SOURCES_TEMP)
+  file(READ "${OBJECT_LIST_FILE}" OBJECT_FILES_LIST_OBJECTS_TEMP)
 
   set(OBJECT_FILES_LIST_SOURCES ${OBJECT_FILES_LIST_SOURCES_TEMP} PARENT_SCOPE)
   set(OBJECT_FILES_LIST_OBJECTS ${OBJECT_FILES_LIST_OBJECTS_TEMP} PARENT_SCOPE)
